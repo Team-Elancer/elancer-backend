@@ -7,10 +7,13 @@ import com.example.elancer.freelancer.dto.FreelancerAccountCoverRequest;
 import com.example.elancer.freelancer.dto.FreelancerAccountDetailResponse;
 import com.example.elancer.freelancer.dto.response.FreelancerObtainOrdersResponse;
 import com.example.elancer.freelancer.exception.NotExistFreelancerException;
+import com.example.elancer.freelancer.exception.NotExistFreelancerThumbnailException;
 import com.example.elancer.freelancer.model.CareerForm;
 import com.example.elancer.freelancer.model.Freelancer;
+import com.example.elancer.freelancer.model.FreelancerThumbnail;
 import com.example.elancer.freelancer.repository.CareerFormRepository;
 import com.example.elancer.freelancer.repository.FreelancerRepository;
+import com.example.elancer.freelancer.repository.FreelancerThumbnailRepository;
 import com.example.elancer.interviewproject.model.InterviewProject;
 import com.example.elancer.interviewproject.repository.InterviewProjectRepository;
 import com.example.elancer.login.auth.dto.MemberDetails;
@@ -37,6 +40,7 @@ public class FreelancerService {
     private final InterviewProjectRepository interviewProjectRepository;
     private final WaitProjectSearchRepository waitProjectSearchRepository;
     private final WishProjectRepository wishProjectRepository;
+    private final FreelancerThumbnailRepository freelancerThumbnailRepository;
 
     @Transactional
     public void coverFreelancerAccountInfo(MemberDetails memberDetails, FreelancerAccountCoverRequest freelancerAccountCoverRequest) {
@@ -73,7 +77,17 @@ public class FreelancerService {
                 freelancerAccountCoverRequest.getHopeWorkCity()
         );
 
+        saveFreelancerThumbnail(freelancerAccountCoverRequest, freelancer);
         saveCareerForm(freelancerAccountCoverRequest, freelancer);
+    }
+
+    private void saveFreelancerThumbnail(FreelancerAccountCoverRequest freelancerAccountCoverRequest, Freelancer freelancer) {
+        if (freelancerAccountCoverRequest.getThumbnailPath() == null || freelancerThumbnailRepository.existsByThumbnailPath(freelancerAccountCoverRequest.getThumbnailPath())) {
+            return;
+        }
+
+        FreelancerThumbnail freelancerThumbnail = freelancerThumbnailRepository.save(FreelancerThumbnail.createFreelancerThumbnail(freelancerAccountCoverRequest.getThumbnailPath(), freelancer));
+        freelancer.coverThumbnail(freelancerThumbnail);
     }
 
     private void saveCareerForm(FreelancerAccountCoverRequest freelancerAccountCoverRequest, Freelancer freelancer) {

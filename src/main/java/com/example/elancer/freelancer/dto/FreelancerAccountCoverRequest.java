@@ -79,6 +79,7 @@ public class FreelancerAccountCoverRequest {
 
     private CountryType hopeWorkCountry;
     private String hopeWorkCity;
+    private String thumbnailPath;
 
     public List<WorkType> toWorkTypes() {
         return this.freelancerWorkTypes.stream()

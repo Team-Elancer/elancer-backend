@@ -165,7 +165,8 @@ public class FreelancerDocumentTest extends DocumentBaseTest {
                 WorkPossibleState.POSSIBLE,
                 LocalDate.of(2022, 02, 01),
                 CountryType.KR,
-                "seoul"
+                "seoul",
+                "thumbPath"
         );
 
         //when & then
