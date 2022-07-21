@@ -128,6 +128,10 @@ public class Freelancer extends Member {
         this.careerForm = careerForm;
     }
 
+    public void coverThumbnail(FreelancerThumbnail freelancerThumbnail) {
+        this.freelancerThumbnail = freelancerThumbnail;
+    }
+
     public String getCareerFormFilePath() {
         if (this.careerForm == null) {
             return null;

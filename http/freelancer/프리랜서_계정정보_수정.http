@@ -1,6 +1,6 @@
 PUT http://localhost:8080/freelancer
 Content-Type: application/json
-Authorization: eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InVyaXNlZ2VhQG5hdmVyLmNvbSIsImlhdCI6MTY0NzA5NTQzMCwiZXhwIjoxNjQ3MDk3MjMwfQ.LZpdVjKuhViOYTYT2ory5k4l4ClP43ihhP3TxIzQQ4c
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cmlSUlJSUiIsImlhdCI6MTY1ODMzMTgzMiwiZXhwIjoxNjU4MzMxOTUyfQ.rehm9bW1Je4Oe3v8QRSIBj5OKMT42Mu4nl-VmtCgGck
 
 
 # info

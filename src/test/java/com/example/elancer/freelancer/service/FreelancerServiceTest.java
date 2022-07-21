@@ -12,6 +12,7 @@ import com.example.elancer.freelancer.dto.FreelancerAccountDetailResponse;
 import com.example.elancer.freelancer.dto.response.FreelancerObtainOrdersResponse;
 import com.example.elancer.freelancer.model.CareerForm;
 import com.example.elancer.freelancer.model.Freelancer;
+import com.example.elancer.freelancer.model.FreelancerThumbnail;
 import com.example.elancer.freelancer.model.FreelancerWorkType;
 import com.example.elancer.freelancer.model.HopeWorkState;
 import com.example.elancer.freelancer.model.KOSAState;
@@ -20,6 +21,7 @@ import com.example.elancer.freelancer.model.PresentWorkState;
 import com.example.elancer.freelancer.model.WorkPossibleState;
 import com.example.elancer.freelancer.model.WorkType;
 import com.example.elancer.freelancer.repository.CareerFormRepository;
+import com.example.elancer.freelancer.repository.FreelancerThumbnailRepository;
 import com.example.elancer.freelancer.repository.FreelancerWorkTypeRepository;
 import com.example.elancer.interviewproject.model.InterviewProject;
 import com.example.elancer.interviewproject.repository.InterviewProjectRepository;
@@ -77,11 +79,16 @@ class FreelancerServiceTest extends ServiceBaseTest {
     @Autowired
     private WishProjectRepository wishProjectRepository;
 
+    @Autowired
+    private FreelancerThumbnailRepository freelancerThumbnailRepository;
+
     @DisplayName("프리랜서 계정 정보가 업데이트 된다")
     @Test
     public void 프리랜서_계정_정보가_업데이트() {
         //given
         Freelancer freelancer = FreelancerHelper.프리랜서_생성(freelancerRepository, passwordEncoder);
+
+        freelancerThumbnailRepository.save(FreelancerThumbnail.createFreelancerThumbnail("testPath", freelancer));
 
         MemberDetails memberDetails = MemberDetails.builder()
                 .id(freelancer.getNum())
@@ -89,6 +96,7 @@ class FreelancerServiceTest extends ServiceBaseTest {
                 .role(freelancer.getRole())
                 .build();
 
+        String thumbPath = "thumbPath";
         FreelancerAccountCoverRequest freelancerAccountCoverRequest = new FreelancerAccountCoverRequest(
                 "멤버이름",
                 "패스워드",
@@ -115,7 +123,8 @@ class FreelancerServiceTest extends ServiceBaseTest {
                 WorkPossibleState.POSSIBLE,
                 LocalDate.of(2022, 02, 01),
                 CountryType.KR,
-                "seoul"
+                "seoul",
+                thumbPath
         );
 
         //when
@@ -155,6 +164,10 @@ class FreelancerServiceTest extends ServiceBaseTest {
 
         List<CareerForm> careerForms = careerFormRepository.findAll();
         Assertions.assertThat(careerForms).hasSize(1);
+
+        List<FreelancerThumbnail> thumbnails = freelancerThumbnailRepository.findAll();
+        Assertions.assertThat(thumbnails).hasSize(1);
+        Assertions.assertThat(thumbnails.get(0).getThumbnailPath()).isEqualTo(thumbPath);
     }
 
     @DisplayName("프리랜서 계정 정보를 조회한다.")

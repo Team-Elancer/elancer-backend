@@ -154,7 +154,8 @@ public class FreelancerIntegrateTest extends IntegrateBaseTest {
                 WorkPossibleState.POSSIBLE,
                 LocalDate.of(2022, 02, 01),
                 CountryType.KR,
-                "seoul"
+                "seoul",
+                "thumbPath"
         );
 
         //when
