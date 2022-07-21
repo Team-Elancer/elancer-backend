@@ -207,7 +207,8 @@ public class FreelancerDocumentTest extends DocumentBaseTest {
                                 fieldWithPath("workPossibleState").type("WorkPossibleState").description("회원 업무가능 여부 정보 필드"),
                                 fieldWithPath("workStartPossibleDate").type("LocalDate").description("회원 업무가능일 정보 필드"),
                                 fieldWithPath("hopeWorkCountry").type("CountryType").description("회원 희망지역 국가 정보 필드"),
-                                fieldWithPath("hopeWorkCity").type("String").description("회원 희망지역 도시 정보 필드")
+                                fieldWithPath("hopeWorkCity").type("String").description("회원 희망지역 도시 정보 필드"),
+                                fieldWithPath("thumbnailPath").type("String").description("회원 섬네일 url 정보 필드")
                         )
                 ));
     }
