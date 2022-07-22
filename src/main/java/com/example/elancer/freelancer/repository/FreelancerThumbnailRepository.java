@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface FreelancerThumbnailRepository extends JpaRepository<FreelancerThumbnail, Long> {
 
-    Optional<FreelancerThumbnail> findByThumbnailPath(String path);
+    Optional<FreelancerThumbnail> findByFreelancerNum(Long freelancer);
 
     boolean existsByThumbnailPath(String path);
 }

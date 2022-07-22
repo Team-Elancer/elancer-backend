@@ -82,12 +82,12 @@ public class FreelancerService {
     }
 
     private void saveFreelancerThumbnail(FreelancerAccountCoverRequest freelancerAccountCoverRequest, Freelancer freelancer) {
-        if (freelancerAccountCoverRequest.getThumbnailPath() == null || freelancerThumbnailRepository.existsByThumbnailPath(freelancerAccountCoverRequest.getThumbnailPath())) {
+        if (freelancerAccountCoverRequest.getThumbnailPath() == null) {
             return;
         }
 
-        FreelancerThumbnail freelancerThumbnail = freelancerThumbnailRepository.save(FreelancerThumbnail.createFreelancerThumbnail(freelancerAccountCoverRequest.getThumbnailPath(), freelancer));
-        freelancer.coverThumbnail(freelancerThumbnail);
+        FreelancerThumbnail freelancerThumbnail1 = FreelancerThumbnail.createFreelancerThumbnail(freelancerAccountCoverRequest.getThumbnailPath(), freelancer);
+        freelancer.coverThumbnail(freelancerThumbnail1);
     }
 
     private void saveCareerForm(FreelancerAccountCoverRequest freelancerAccountCoverRequest, Freelancer freelancer) {
