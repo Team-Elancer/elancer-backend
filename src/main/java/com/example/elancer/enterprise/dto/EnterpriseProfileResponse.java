@@ -2,8 +2,10 @@ package com.example.elancer.enterprise.dto;
 
 import com.example.elancer.enterprise.model.enterprise.Enterprise;
 import com.example.elancer.enterprise.model.enterprise.EnterpriseBizRegistration;
+import com.example.elancer.enterprise.model.enterpriseintro.CareerStatement;
 import com.example.elancer.enterprise.model.enterpriseintro.EnterpriseMainBiz;
 import com.example.elancer.enterprise.model.enterpriseintro.EnterpriseSubBiz;
+import com.example.elancer.enterprise.model.enterpriseintro.Portfolio;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +33,9 @@ public class EnterpriseProfileResponse {
     private String subEtc;
 
     private String bizRegistration;
+
+    private String careerStatementPath;
+    private String portfolioPath;
 
 
     public static EnterpriseProfileResponse of(Enterprise enterprise) {
@@ -67,7 +72,10 @@ public class EnterpriseProfileResponse {
                 mainEtc,
                 subBizCodes,
                 subEtc,
-                Optional.ofNullable(enterprise.getEnterpriseBizRegistration()).map(EnterpriseBizRegistration::getFilePath).orElse(null)
+                Optional.ofNullable(enterprise.getEnterpriseBizRegistration()).map(EnterpriseBizRegistration::getFilePath).orElse(null),
+                Optional.ofNullable(enterprise.getEnterpriseIntro().getCareerStatement()).map(CareerStatement::getCareerStatementPath).orElse(null),
+                Optional.ofNullable(enterprise.getEnterpriseIntro().getPortfolio()).map(Portfolio::getPortfolioPath).orElse(null)
         );
     }
+
 }

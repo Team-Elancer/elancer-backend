@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
@@ -57,14 +58,9 @@ public class EnterpriseIntroDocumentTest extends DocumentBaseTest {
         SubBusinessHelper.업무분야_데이터_생성(subBusinessRepository);
         MemberLoginResponse memberLoginResponse = EnterpriseLoginHelper.로그인(enterprise.getUserId(), jwtTokenService);
 
-        List<String> mainBizCodes = new ArrayList<>();
-        mainBizCodes.add("main_biz1");
-        mainBizCodes.add("main_biz2");
-        mainBizCodes.add("main_biz3");
-        List<String> subBizCodes = new ArrayList<>();
-        subBizCodes.add("sub_biz1");
-        subBizCodes.add("sub_biz2");
-        subBizCodes.add("sub_etc");
+        List<String> mainBizCodes = Arrays.asList("main_biz1", "main_biz2", "main_biz3");
+        List<String> subBizCodes = Arrays.asList("sub_biz1", "sub_biz2", "sub_etc");
+
 
         EnterpriseProfileRequest enterpriseProfileRequest = new EnterpriseProfileRequest(
                 "프로필 title",
@@ -75,7 +71,9 @@ public class EnterpriseIntroDocumentTest extends DocumentBaseTest {
                 "",
                 subBizCodes,
                 "업무 분야 기타",
-                "사업자 등록증 url"
+                "사업자 등록증 url",
+                "www.careerStatementPath.com",
+                "www.portfolio.com"
         );
 
 
@@ -101,7 +99,9 @@ public class EnterpriseIntroDocumentTest extends DocumentBaseTest {
                                 fieldWithPath("mainEtc").type("String").description("사업 분야 기타"),
                                 fieldWithPath("subBizCodes").type("List<String>").description("업무 분야"),
                                 fieldWithPath("subEtc").type("String").description("업무 분야 기타"),
-                                fieldWithPath("bizRegistration").type("String").description("사업자 등록증 url")
+                                fieldWithPath("bizRegistration").type("String").description("사업자 등록증 url"),
+                                fieldWithPath("careerStatementPath").type("String").description("경력 기술서 url"),
+                                fieldWithPath("portfolioPath").type("String").description("포트폴리오 url")
                         ),
                         responseHeaders(
                                 headerWithName(HttpHeaders.CONTENT_TYPE).description("응답 데이터의 타입필드, 응답 객체는 JSON 형태로 응답 ")
@@ -115,7 +115,9 @@ public class EnterpriseIntroDocumentTest extends DocumentBaseTest {
                                 fieldWithPath("mainEtc").type("String").description("사업 분야 기타"),
                                 fieldWithPath("subBizCodes").type("List<String>").description("업무 분야"),
                                 fieldWithPath("subEtc").type("String").description("업무 분야 기타"),
-                                fieldWithPath("bizRegistration").type("String").description("사업자 등록증 url")
+                                fieldWithPath("bizRegistration").type("String").description("사업자 등록증 url"),
+                                fieldWithPath("careerStatementPath").type("String").description("경력 기술서 url"),
+                                fieldWithPath("portfolioPath").type("String").description("포트폴리오 url")
                         )
                 ));
     }
@@ -153,7 +155,9 @@ public class EnterpriseIntroDocumentTest extends DocumentBaseTest {
                 "",
                 subBizCodes,
                 "업무 분야 기타",
-                "사업자 등록증 url"
+                "사업자 등록증 url",
+                "www.careerStatementPath.com",
+                "www.portfolio.com"
         );
 
         enterpriseService.updateIntro(memberDetails, enterpriseProfileRequest);
@@ -179,7 +183,9 @@ public class EnterpriseIntroDocumentTest extends DocumentBaseTest {
                                 fieldWithPath("mainEtc").type("String").description("사업 분야 기타"),
                                 fieldWithPath("subBizCodes").type("List<String>").description("업무 분야"),
                                 fieldWithPath("subEtc").type("String").description("업무 분야 기타"),
-                                fieldWithPath("bizRegistration").type("String").description("사업자 등록증 url")
+                                fieldWithPath("bizRegistration").type("String").description("사업자 등록증 url"),
+                                fieldWithPath("careerStatementPath").type("String").description("경력 기술서 url"),
+                                fieldWithPath("portfolioPath").type("String").description("포트폴리오 url")
                         )
                 ));
 

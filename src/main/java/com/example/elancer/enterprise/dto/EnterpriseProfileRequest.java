@@ -20,7 +20,6 @@ public class EnterpriseProfileRequest {
     @NotBlank
     private String idNumber;
 
-    // todo - 이후에 사업자 등록증 파일 등록 구현
     private List<String> mainBizCodes = new ArrayList<>();
     private String mainEtc;
 
@@ -28,5 +27,8 @@ public class EnterpriseProfileRequest {
     private String subEtc;
 
     private String bizRegistration;
+
+    private String careerStatementPath;
+    private String portfolioPath;
 
 }
