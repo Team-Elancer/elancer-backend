@@ -6,6 +6,8 @@ import com.example.elancer.common.SubBusinessHelper;
 import com.example.elancer.document.common.DocumentBaseTest;
 import com.example.elancer.enterprise.model.enterprise.Enterprise;
 import com.example.elancer.enterprise.dto.EnterpriseProfileRequest;
+import com.example.elancer.enterprise.model.enterpriseintro.EnterpriseIntro;
+import com.example.elancer.enterprise.repository.EnterpriseIntroRepository;
 import com.example.elancer.enterprise.repository.MainBusinessRepository;
 import com.example.elancer.enterprise.repository.SubBusinessRepository;
 import com.example.elancer.enterprise.service.EnterpriseService;
@@ -43,6 +45,10 @@ public class EnterpriseIntroDocumentTest extends DocumentBaseTest {
     @Autowired
     SubBusinessRepository subBusinessRepository;
 
+    @Autowired
+    EnterpriseIntroRepository enterpriseIntroRepository;
+
+
     @AfterEach
     void tearDown() {
         databaseCleaner.clean();
@@ -54,6 +60,7 @@ public class EnterpriseIntroDocumentTest extends DocumentBaseTest {
 
         //given
         Enterprise enterprise = EnterpriseHelper.기업_생성(enterpriseRepository, passwordEncoder);
+        enterpriseIntroRepository.save(EnterpriseIntro.initializeFrom("안녕하세요. 땡떙기업입니다.", enterprise));
         MainBusinessHelper.사업분야_데이터_생성(mainBusinessRepository);
         SubBusinessHelper.업무분야_데이터_생성(subBusinessRepository);
         MemberLoginResponse memberLoginResponse = EnterpriseLoginHelper.로그인(enterprise.getUserId(), jwtTokenService);
@@ -127,6 +134,7 @@ public class EnterpriseIntroDocumentTest extends DocumentBaseTest {
     public void 기업_프로필_조회_문서화() throws Exception {
         //given
         Enterprise enterprise = EnterpriseHelper.기업_생성(enterpriseRepository, passwordEncoder);
+        enterpriseIntroRepository.save(EnterpriseIntro.initializeFrom("안녕하세요. 땡떙기업입니다.", enterprise));
         MainBusinessHelper.사업분야_데이터_생성(mainBusinessRepository);
         SubBusinessHelper.업무분야_데이터_생성(subBusinessRepository);
         MemberLoginResponse memberLoginResponse = EnterpriseLoginHelper.로그인(enterprise.getUserId(), jwtTokenService);
