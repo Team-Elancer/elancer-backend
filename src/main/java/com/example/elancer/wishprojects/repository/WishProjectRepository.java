@@ -1,6 +1,7 @@
 package com.example.elancer.wishprojects.repository;
 
 import com.example.elancer.wishprojects.model.WishProject;
+import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

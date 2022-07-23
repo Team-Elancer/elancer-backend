@@ -1,6 +1,7 @@
 package com.example.elancer.applyproject.service;
 
 import com.example.elancer.applyproject.dto.ApplyProjectCreateRequest;
+import com.example.elancer.applyproject.exception.DuplicationApplyProjectException;
 import com.example.elancer.applyproject.model.ApplyProject;
 import com.example.elancer.applyproject.repository.ApplyProjectRepository;
 import com.example.elancer.freelancer.exception.NotExistFreelancerException;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ApplyProjectService {
@@ -24,6 +27,11 @@ public class ApplyProjectService {
 
     @Transactional
     public void createApplyProject(ApplyProjectCreateRequest applyProjectCreateRequest, MemberDetails memberDetails) {
+        Optional<ApplyProject> byFreelancerNumAndProjectNum = applyProjectRepository.findByFreelancerNumAndProjectNum(memberDetails.getId(), applyProjectCreateRequest.getProjectNum());
+        if (byFreelancerNumAndProjectNum.isPresent()) {
+            throw new DuplicationApplyProjectException();
+        }
+
         Freelancer freelancer = freelancerRepository.findById(memberDetails.getId()).orElseThrow(NotExistFreelancerException::new);
         Project project = projectRepository.findById(applyProjectCreateRequest.getProjectNum()).orElseThrow(NotExistProjectException::new);
         applyProjectRepository.save(ApplyProject.createApplyProject(freelancer, project));

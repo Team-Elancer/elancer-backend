@@ -9,6 +9,7 @@ import com.example.elancer.project.model.Project;
 import com.example.elancer.project.repository.ProjectRepository;
 import com.example.elancer.wishprojects.dto.WishProjectDeleteRequest;
 import com.example.elancer.wishprojects.dto.WishProjectSaveRequest;
+import com.example.elancer.wishprojects.exception.DuplicationWishProjectException;
 import com.example.elancer.wishprojects.exception.NotExistProjectException;
 import com.example.elancer.wishprojects.exception.NotExistWishProjectException;
 import com.example.elancer.wishprojects.model.WishProject;
@@ -16,6 +17,8 @@ import com.example.elancer.wishprojects.repository.WishProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,10 @@ public class WishProjectService {
     @Transactional
     public void saveWishProject(MemberDetails memberDetails, WishProjectSaveRequest wishProjectSaveOrDeleteRequest) {
         RightRequestChecker.checkMemberDetail(memberDetails);
+        Optional<WishProject> byFreelancerNumAndProjectNum = wishProjectRepository.findByFreelancerNumAndProjectNum(memberDetails.getId(), wishProjectSaveOrDeleteRequest.getProjectNum());
+        if (byFreelancerNumAndProjectNum.isPresent()) {
+            throw new DuplicationWishProjectException();
+        }
         Freelancer freelancer = freelancerRepository.findById(memberDetails.getId()).orElseThrow(NotExistFreelancerException::new);
         Project project = projectRepository.findById(wishProjectSaveOrDeleteRequest.getProjectNum()).orElseThrow(NotExistProjectException::new);
         wishProjectRepository.save(WishProject.createWishProject(freelancer, project));
