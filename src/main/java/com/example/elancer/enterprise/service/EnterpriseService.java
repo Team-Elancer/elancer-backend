@@ -31,11 +31,14 @@ public class EnterpriseService {
 
     private final PasswordEncoder passwordEncoder;
     private final EnterpriseRepository enterpriseRepository;
+    private final EnterpriseIntroRepository enterpriseIntroRepository;
     private final MainBusinessRepository mainBusinessRepository;
     private final SubBusinessRepository subBusinessRepository;
     private final WishFreelancerRepository wishFreelancerRepository;
     private final EnterpriseThumbnailRepository enterpriseThumbnailRepository;
     private final EnterpriseBizRegistrationRepository enterpriseBizRegistrationRepository;
+    private final CareerStatementRepository careerStatementRepository;
+    private final PortfolioRepository portfolioRepository;
 
 
 
@@ -138,24 +141,56 @@ public class EnterpriseService {
         RightRequestChecker.checkMemberDetail(memberDetails);
         Enterprise enterprise = enterpriseRepository.findById(memberDetails.getId()).orElseThrow(NotExistEnterpriseException::new);
 
-
         List<EnterpriseMainBiz> enterpriseMainBizs = getEnterpriseMainBizs(enterpriseProfileRequest);
         List<EnterpriseSubBiz> enterpriseSubBizs = getEnterpriseSubBizs(enterpriseProfileRequest);
 
         mainEtcInsert(enterpriseProfileRequest, enterpriseMainBizs);
         subEtcInsert(enterpriseProfileRequest, enterpriseSubBizs);
 
-
-        EnterpriseIntro enterpriseIntro = EnterpriseIntro.of(enterpriseProfileRequest.getIntroTitle(), enterpriseMainBizs, enterpriseSubBizs, enterprise);
+        EnterpriseIntro findEnterpriseIntro = enterprise.getEnterpriseIntro();
+        findEnterpriseIntro.updateEnterpriseIntro(
+                enterpriseProfileRequest.getIntroTitle(),
+                enterpriseMainBizs,
+                enterpriseSubBizs
+        );
 
         updateBizRegistration(enterpriseProfileRequest.getBizRegistration(), enterprise);
 
-        enterprise.updateIntro(enterpriseIntro,
+
+        updateCareerStatement(enterpriseProfileRequest.getCareerStatementPath(), findEnterpriseIntro);
+        updatePortfolio(enterpriseProfileRequest.getPortfolioPath(), findEnterpriseIntro);
+
+        enterprise.updateIntro(
                 enterpriseProfileRequest.getBizContents(),
                 enterpriseProfileRequest.getSales(),
                 enterpriseProfileRequest.getIdNumber());
+
         return EnterpriseProfileResponse.of(enterprise);
     }
+
+    private void updateCareerStatement(String careerStatement, EnterpriseIntro enterpriseIntro) {
+        if (careerStatement == null) {
+            return;
+        }
+        if (enterpriseIntro.getCareerStatement() == null) {
+            careerStatementRepository.save(CareerStatement.createCareerStatement(careerStatement, enterpriseIntro));
+        } else {
+            enterpriseIntro.getCareerStatement().updateCareerStatementPath(careerStatement);
+        }
+    }
+
+    private void updatePortfolio(String portfolioPath, EnterpriseIntro enterpriseIntro) {
+        if (portfolioPath == null) {
+            return;
+        }
+        if (enterpriseIntro.getCareerStatement() == null) {
+            portfolioRepository.save(Portfolio.createPortfolio(portfolioPath, enterpriseIntro));
+        } else {
+            enterpriseIntro.getPortfolio().updatePortfolioPath(portfolioPath);
+        }
+    }
+
+
 
     public EnterpriseDashBoardProfileResponse findDashBoardProfile(MemberDetails memberDetails) {
         RightRequestChecker.checkMemberDetail(memberDetails);

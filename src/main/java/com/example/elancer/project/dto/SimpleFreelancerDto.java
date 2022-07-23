@@ -1,9 +1,13 @@
 package com.example.elancer.project.dto;
 
 import com.example.elancer.freelancer.model.Freelancer;
+import com.example.elancer.freelancer.model.FreelancerThumbnail;
+import com.example.elancer.project.model.EnterpriseLogo;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Optional;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,7 +22,7 @@ public class SimpleFreelancerDto {
 
     public static SimpleFreelancerDto of(Freelancer freelancer) {
         return new SimpleFreelancerDto(
-                "",
+                Optional.ofNullable(freelancer.getFreelancerThumbnail()).map(FreelancerThumbnail::getThumbnailPath).orElse(null),
                 freelancer.getName()
         );
     }

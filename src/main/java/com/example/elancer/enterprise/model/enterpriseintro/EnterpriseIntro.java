@@ -26,15 +26,21 @@ public class EnterpriseIntro extends BasicEntity{
     @OneToMany(mappedBy = "enterpriseIntro", cascade = CascadeType.ALL)
     private List<EnterpriseSubBiz> enterpriseSubBizs = new ArrayList<>();
 
-    @OneToOne(mappedBy = "enterpriseIntro", cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     private Enterprise enterprise;
 
+    @OneToOne(mappedBy = "enterpriseIntro", cascade = CascadeType.ALL)
+    private CareerStatement careerStatement;
+
+    @OneToOne(mappedBy = "enterpriseIntro", cascade = CascadeType.ALL)
+    private Portfolio portfolio;
 
 
     // TODO 파일 저장 테이블이 정해지면 포트폴리오 및 기타문서 파일 구현
 
     @Builder
     public EnterpriseIntro(String introTitle, Enterprise enterprise) {
+
         this.introTitle = introTitle;
         this.enterprise = enterprise;
     }
@@ -53,8 +59,9 @@ public class EnterpriseIntro extends BasicEntity{
         return enterpriseIntro;
     }
 
-    public static EnterpriseIntro initializeFrom(String name) {
+    public static EnterpriseIntro initializeFrom(String name, Enterprise enterprise) {
         return EnterpriseIntro.builder()
+                .enterprise(enterprise)
                 .introTitle("안녕하세요. " + name + "입니다")
                 .build();
     }
@@ -71,5 +78,11 @@ public class EnterpriseIntro extends BasicEntity{
 
     public void initializeEnterpriseProfile(String name) {
         this.introTitle = "안녕하세요. " + name + "입니다";
+    }
+
+    public void updateEnterpriseIntro(String introTitle, List<EnterpriseMainBiz> enterpriseMainBizs, List<EnterpriseSubBiz> enterpriseSubBizs) {
+        this.introTitle = introTitle;
+        this.enterpriseMainBizs = enterpriseMainBizs;
+        this.enterpriseSubBizs = enterpriseSubBizs;
     }
 }

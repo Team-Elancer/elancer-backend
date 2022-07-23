@@ -7,6 +7,7 @@ import com.example.elancer.enterprise.model.enterpriseintro.EnterpriseIntro;
 import com.example.elancer.enterprise.dto.EnterpriseJoinRequest;
 import com.example.elancer.enterprise.exception.EnterpriseCheckUserIdException;
 import com.example.elancer.enterprise.repository.EnterpriseBizRegistrationRepository;
+import com.example.elancer.enterprise.repository.EnterpriseIntroRepository;
 import com.example.elancer.enterprise.repository.EnterpriseRepository;
 import com.example.elancer.enterprise.repository.EnterpriseThumbnailRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class EnterpriseJoinService {
 //    private final EnterpriseProfileRepository enterpriseProfileRepository;
     private final EnterpriseThumbnailRepository enterpriseThumbnailRepository;
     private final EnterpriseBizRegistrationRepository enterpriseBizRegistrationRepository;
+    private final EnterpriseIntroRepository enterpriseIntroRepository;
 
     @Transactional
     public void joinEnterprise(EnterpriseJoinRequest enterpriseJoinRequest) {
@@ -32,8 +34,8 @@ public class EnterpriseJoinService {
         enterpriseJoinRequest.setPassword1(bCryptPasswordEncoder.encode(enterpriseJoinRequest.getPassword1()));
         Enterprise enterprise = enterpriseJoinRequest.toEntity();
 
-        EnterpriseIntro enterpriseIntro = EnterpriseIntro.initializeFrom(enterprise.getName());
-        enterprise.initialIntro(enterpriseIntro);
+        EnterpriseIntro enterpriseIntro = EnterpriseIntro.initializeFrom(enterprise.getName(), enterprise);
+        enterpriseIntroRepository.save(enterpriseIntro);
 
         Enterprise savedEnterprise = enterpriseRepository.save(enterprise);
 

@@ -57,8 +57,7 @@ public class Enterprise extends Member {
     @OneToOne(fetch = LAZY, mappedBy = "enterprise", cascade = CascadeType.ALL, orphanRemoval = true)
     private EnterpriseBizRegistration enterpriseBizRegistration;
 
-    @OneToOne(fetch = LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "enDetails_id", unique = true)
+    @OneToOne(fetch = LAZY, mappedBy = "enterprise", cascade = CascadeType.ALL)
     private EnterpriseIntro enterpriseIntro;
 
     @OneToMany(mappedBy = "enterprise", cascade = CascadeType.ALL)
@@ -104,8 +103,7 @@ public class Enterprise extends Member {
     }
 
 
-    public void updateIntro(EnterpriseIntro enterpriseIntro, String bizContents, Long sales, String idNumber) {
-        this.enterpriseIntro = enterpriseIntro;
+    public void updateIntro(String bizContents, Long sales, String idNumber) {
         this.bizContents = bizContents;
         this.sales = sales;
         this.idNumber = idNumber;
