@@ -3,6 +3,7 @@ package com.example.elancer.project.service;
 import com.example.elancer.applyproject.model.ApplyProject;
 import com.example.elancer.applyproject.repository.ApplyProjectRepository;
 import com.example.elancer.common.checker.RightRequestChecker;
+import com.example.elancer.common.likechecker.ProjectLikeChecker;
 import com.example.elancer.enterprise.exception.NotExistEnterpriseException;
 import com.example.elancer.enterprise.model.enterprise.Enterprise;
 import com.example.elancer.enterprise.repository.EnterpriseLogoRepository;
@@ -19,6 +20,7 @@ import com.example.elancer.waitproject.model.WaitProject;
 import com.example.elancer.waitproject.model.WaitStatus;
 import com.example.elancer.waitproject.repsitory.WaitProjectRepository;
 import com.example.elancer.wishprojects.exception.NotExistProjectException;
+import com.example.elancer.wishprojects.repository.WishProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -40,6 +42,7 @@ public class ProjectService {
     private final ApplyProjectRepository applyProjectRepository;
     private final InterviewProjectRepository interviewProjectRepository;
     private final EnterpriseLogoRepository enterpriseLogoRepository;
+    private final WishProjectRepository wishProjectRepository;
 
     public ProjectDetailResponse findDetailProject(Long projectNum) {
         Project project = projectRepository.findById(projectNum).orElseThrow(NotExistProjectException::new);
@@ -53,7 +56,7 @@ public class ProjectService {
     }
 
 
-    public Slice<ProjectBoxResponse> searchProjectList(String position, String skill, PositionKind positionKind, List<String> skills, ProjectType projectType, FreelancerWorkmanShip freelancerWorkmanShip, String region, String searchKey, Pageable pageable) {
+    public InfinityListResponse searchProjectList(MemberDetails memberDetails,String position, String skill, PositionKind positionKind, List<String> skills, ProjectType projectType, FreelancerWorkmanShip freelancerWorkmanShip, String region, String searchKey, Pageable pageable) {
 
         Slice<Project> searchProject = projectSearchRepository.findSearchProject(
                 getPositionKind(position),
@@ -65,28 +68,40 @@ public class ProjectService {
                 region,
                 searchKey,
                 pageable);
-        return searchProject.map(s ->
+        Slice<ProjectBoxResponse> projectListBySearching = searchProject.map(s ->
                 ProjectBoxResponse.listBoxOf(s));
+
+        ProjectLikeChecker.confirmWishProjectToRequest(memberDetails, projectListBySearching.getContent(), wishProjectRepository);
+
+        InfinityListResponse infinityListResponse = InfinityListResponse.of(projectListBySearching.getContent(), !projectListBySearching.isLast());
+
+        return infinityListResponse;
 
     }
 
-    public IndexProjectResponse findIndexProjectList() {
+    public IndexProjectResponse findIndexProjectList(MemberDetails memberDetails) {
         List<Project> developProject = projectRepository.findTop3ByPositionKindOrderByNumDesc(PositionKind.DEVELOPER);
         List<Project> publisherProject = projectRepository.findTop3ByPositionKindOrderByNumDesc(PositionKind.PUBLISHER);
         List<Project> designerProject = projectRepository.findTop3ByPositionKindOrderByNumDesc(PositionKind.DESIGNER);
         List<Project> plannerProject = projectRepository.findTop3ByPositionKindOrderByNumDesc(PositionKind.PLANNER);
         List<Project> etcProject = projectRepository.findTop3ByPositionKindOrderByNumDesc(PositionKind.ETC);
 
-
-
-
-        return IndexProjectResponse.of(
+        IndexProjectResponse indexProjectResponse = IndexProjectResponse.of(
                 developProject,
                 publisherProject,
                 designerProject,
                 plannerProject,
                 etcProject
         );
+
+        ProjectLikeChecker.confirmWishProjectToRequest(memberDetails, indexProjectResponse.getDeveloperProjectList(), wishProjectRepository);
+        ProjectLikeChecker.confirmWishProjectToRequest(memberDetails, indexProjectResponse.getPublisherProjectList(), wishProjectRepository);
+        ProjectLikeChecker.confirmWishProjectToRequest(memberDetails, indexProjectResponse.getDesignerProjectList(), wishProjectRepository);
+        ProjectLikeChecker.confirmWishProjectToRequest(memberDetails, indexProjectResponse.getPlannerProjectList(), wishProjectRepository);
+        ProjectLikeChecker.confirmWishProjectToRequest(memberDetails, indexProjectResponse.getEtcProjectList(), wishProjectRepository);
+
+
+        return indexProjectResponse;
     }
 
     @Transactional
@@ -143,11 +158,16 @@ public class ProjectService {
     }
 
 
-    public List<ProjectBoxResponse> findRecommendProject() {
+    public List<ProjectBoxResponse> findRecommendProject(MemberDetails memberDetails) {
         List<Project> recommendProjects = projectRepository.findRandomProject();
-        System.out.println("recommendProjects.size() = " + recommendProjects.size());
-        return recommendProjects.stream().map(s ->
+
+        List<ProjectBoxResponse> recommendProjectList = recommendProjects.stream().map(s ->
                 ProjectBoxResponse.cardBoxOf(s)).collect(Collectors.toList());
+
+        ProjectLikeChecker.confirmWishProjectToRequest(memberDetails, recommendProjectList, wishProjectRepository);
+
+
+        return recommendProjectList;
     }
 
     public ProjectListCount projectCount(MemberDetails memberDetails) {

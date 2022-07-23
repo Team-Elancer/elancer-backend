@@ -1,5 +1,6 @@
 package com.example.elancer.project.dto;
 
+import com.example.elancer.common.likechecker.ProjectLikeChecker;
 import com.example.elancer.project.model.Project;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -42,4 +43,5 @@ public class IndexProjectResponse {
                         ProjectBoxResponse.listBoxOf(s)).collect(Collectors.toList())
         );
     }
+
 }

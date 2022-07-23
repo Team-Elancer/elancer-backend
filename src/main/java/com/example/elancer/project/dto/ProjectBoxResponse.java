@@ -112,4 +112,7 @@ public class ProjectBoxResponse {
                 .build();
     }
 
+    public void switchWishState() {
+        this.wishState = true;
+    }
 }

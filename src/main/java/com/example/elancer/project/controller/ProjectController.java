@@ -2,7 +2,6 @@ package com.example.elancer.project.controller;
 
 import com.example.elancer.enterprise.dto.EnterpriseSimpleDetailResponse;
 import com.example.elancer.enterprise.service.EnterpriseService;
-import com.example.elancer.freelancerprofile.dto.FreelancerSimpleResponse;
 import com.example.elancer.login.auth.dto.MemberDetails;
 import com.example.elancer.project.dto.*;
 import com.example.elancer.project.model.FreelancerWorkmanShip;
@@ -39,15 +38,18 @@ public class ProjectController {
     }
 
     @GetMapping("/project-index-list")
-    public ResponseEntity<IndexProjectResponse> findIndexProjectList() {
+    public ResponseEntity<IndexProjectResponse> findIndexProjectList(
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
 
-        IndexProjectResponse indexProjectList = projectService.findIndexProjectList();
+        IndexProjectResponse indexProjectList = projectService.findIndexProjectList(memberDetails);
 
         return new ResponseEntity<>(indexProjectList, HttpStatus.OK);
     }
 
     @GetMapping("/project-list")
     public ResponseEntity<InfinityListResponse> findProjectList(
+            @AuthenticationPrincipal MemberDetails memberDetails,
             @RequestParam(required = false) String position,
             @RequestParam(required = false) String skill,
             @RequestParam(required = false) PositionKind positionKind,
@@ -72,7 +74,8 @@ public class ProjectController {
         System.out.println("regin = " + region);
         System.out.println("searchKey = " + searchKey);
 
-        Slice<ProjectBoxResponse> projectBoxResponses = projectService.searchProjectList(
+        InfinityListResponse infinityListResponse = projectService.searchProjectList(
+                memberDetails,
                 position,
                 skill,
                 positionKind,
@@ -82,7 +85,7 @@ public class ProjectController {
                 region,
                 searchKey,
                 pageable);
-        InfinityListResponse infinityListResponse = InfinityListResponse.of(projectBoxResponses.getContent(), !projectBoxResponses.isLast());
+
         return new ResponseEntity<>(infinityListResponse, HttpStatus.OK);
     }
 
@@ -141,8 +144,10 @@ public class ProjectController {
     }
 
     @GetMapping("/recommend-project")
-    public ResponseEntity<List<ProjectBoxResponse>> RecommendProject() {
-        List<ProjectBoxResponse> recommendProject = projectService.findRecommendProject();
+    public ResponseEntity<List<ProjectBoxResponse>> RecommendProject(
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        List<ProjectBoxResponse> recommendProject = projectService.findRecommendProject(memberDetails);
 
         return new ResponseEntity<>(recommendProject, HttpStatus.OK);
     }
