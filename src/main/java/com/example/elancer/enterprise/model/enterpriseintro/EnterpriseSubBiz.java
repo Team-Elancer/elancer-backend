@@ -31,9 +31,10 @@ public class EnterpriseSubBiz extends BasicEntity{
         this.etc = etc;
     }
 
-    public static List<EnterpriseSubBiz> createList(List<SubBusiness> subBusinesses) {
+    public static List<EnterpriseSubBiz> createList(List<SubBusiness> subBusinesses, EnterpriseIntro enterpriseIntro) {
         return subBusinesses.stream().map((s) ->
                         EnterpriseSubBiz.builder()
+                                .enterpriseIntro(enterpriseIntro)
                                 .subBusiness(s)
                                 .build())
                 .collect(Collectors.toList());

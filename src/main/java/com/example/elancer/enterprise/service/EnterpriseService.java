@@ -39,6 +39,9 @@ public class EnterpriseService {
     private final EnterpriseBizRegistrationRepository enterpriseBizRegistrationRepository;
     private final CareerStatementRepository careerStatementRepository;
     private final PortfolioRepository portfolioRepository;
+    private final EnterpriseMainBizRepository enterpriseMainBizRepository;
+    private final EnterpriseSubBizRepository enterpriseSubBizRepository;
+
 
 
 
@@ -141,13 +144,18 @@ public class EnterpriseService {
         RightRequestChecker.checkMemberDetail(memberDetails);
         Enterprise enterprise = enterpriseRepository.findById(memberDetails.getId()).orElseThrow(NotExistEnterpriseException::new);
 
-        List<EnterpriseMainBiz> enterpriseMainBizs = getEnterpriseMainBizs(enterpriseProfileRequest);
-        List<EnterpriseSubBiz> enterpriseSubBizs = getEnterpriseSubBizs(enterpriseProfileRequest);
+        enterpriseMainBizRepository.deleteByEnterpriseIntroNum(enterprise.getEnterpriseIntro().getNum());
+        enterpriseSubBizRepository.deleteByEnterpriseIntroNum(enterprise.getEnterpriseIntro().getNum());
+
+        List<EnterpriseMainBiz> enterpriseMainBizs = getEnterpriseMainBizs(enterpriseProfileRequest, enterprise.getEnterpriseIntro());
+        List<EnterpriseSubBiz> enterpriseSubBizs = getEnterpriseSubBizs(enterpriseProfileRequest, enterprise.getEnterpriseIntro());
 
         mainEtcInsert(enterpriseProfileRequest, enterpriseMainBizs);
         subEtcInsert(enterpriseProfileRequest, enterpriseSubBizs);
 
         EnterpriseIntro findEnterpriseIntro = enterprise.getEnterpriseIntro();
+
+
         findEnterpriseIntro.updateEnterpriseIntro(
                 enterpriseProfileRequest.getIntroTitle(),
                 enterpriseMainBizs,
@@ -236,14 +244,14 @@ public class EnterpriseService {
             throw new EnterpriseCheckUserIdException();
         }
     }
-    private List<EnterpriseSubBiz> getEnterpriseSubBizs(EnterpriseProfileRequest enterpriseProfileRequest) {
+    private List<EnterpriseSubBiz> getEnterpriseSubBizs(EnterpriseProfileRequest enterpriseProfileRequest, EnterpriseIntro enterpriseIntro) {
         List<SubBusiness> subBusiness = subBusinessRepository.findSubBusiness(enterpriseProfileRequest.getSubBizCodes());
-        return EnterpriseSubBiz.createList(subBusiness);
+        return EnterpriseSubBiz.createList(subBusiness, enterpriseIntro);
     }
 
-    private List<EnterpriseMainBiz> getEnterpriseMainBizs(EnterpriseProfileRequest enterpriseProfileRequest) {
+    private List<EnterpriseMainBiz> getEnterpriseMainBizs(EnterpriseProfileRequest enterpriseProfileRequest, EnterpriseIntro enterpriseIntro) {
         List<MainBusiness> mainBusiness = mainBusinessRepository.findMainBusiness(enterpriseProfileRequest.getMainBizCodes());
-        return EnterpriseMainBiz.createList(mainBusiness);
+        return EnterpriseMainBiz.createList(mainBusiness, enterpriseIntro);
     }
 
     private void mainEtcInsert(EnterpriseProfileRequest enterpriseProfileRequest, List<EnterpriseMainBiz> enterpriseMainBizs) {
